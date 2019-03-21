@@ -3,20 +3,27 @@ pragma solidity 0.4.20;
 contract Voting {
 	struct Candidate {
 		string name;
-		string party; 
 		uint voteCount;
 		bool definedCandidate; 
 	}
 
-	uint numCandidates; 
-	mapping (uint => Candidate) candidates;
-	mapping (address => bool) voters;
+	uint public numCandidates; 
+	mapping (uint => Candidate) public candidates;
+	mapping (address => bool) public voters;
 
-	function addCandidate(string name) public {
+  event votedEvent (
+      uint indexed _candidateId
+  );
+
+	function Election () public {                                               
+		addCandidate("Candidate 1");
+		addCandidate("Candidate 2");
+	}  
+
+	function addCandidate(string _name) private {
 		uint candidateID = numCandidates++;
 
-		candidates[candidateID] = Candidate(name,party,true);
-		AddedCandidate(candidateID);
+		candidates[candidateID] = Candidate(_name,0,true);
 	}
 
 	function vote (uint _candidateID) public {
@@ -24,7 +31,7 @@ contract Voting {
 		require(!voters[msg.sender]);
 
 		// require a valid candidate
-		require(candidates[candidateID].doesExist == true);
+		require(candidates[_candidateID].definedCandidate == true);
 
 		// record that voter has voted
 		voters[msg.sender] = true;
