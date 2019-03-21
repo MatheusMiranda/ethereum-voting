@@ -4,6 +4,7 @@ contract Voting {
 	struct Candidate {
 		string name;
 		string party; 
+		uint voteCount;
 		bool definedCandidate; 
 	}
 
@@ -11,20 +12,27 @@ contract Voting {
 	mapping (uint => Candidate) candidates;
 	mapping (address => bool) voters;
 
-	function vote (uint _candidateId) public {
+	function addCandidate(string name) public {
+		uint candidateID = numCandidates++;
+
+		candidates[candidateID] = Candidate(name,party,true);
+		AddedCandidate(candidateID);
+	}
+
+	function vote (uint _candidateID) public {
 		// require that they haven't voted before
 		require(!voters[msg.sender]);
 
 		// require a valid candidate
-		require(candidates[candidateId].doesExist == true);
+		require(candidates[candidateID].doesExist == true);
 
 		// record that voter has voted
 		voters[msg.sender] = true;
 
 		// update candidate vote Count
-		candidates[_candidateId].voteCount ++;
+		candidates[_candidateID].voteCount ++;
 
 		// trigger voted event
-		votedEvent(_candidateId);
+		votedEvent(_candidateID);
 	}
 }
