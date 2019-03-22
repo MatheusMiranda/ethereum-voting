@@ -23,9 +23,9 @@ App = {
   },
 
   initContract: function() {
-    $.getJSON("Voting.json", function(election) {
+    $.getJSON("Voting.json", function(voting) {
       // Instantiate a new truffle contract from the artifact
-      App.contracts.Voting = TruffleContract(election);
+      App.contracts.Voting = TruffleContract(voting);
       // Connect provider to interact with contract
       App.contracts.Voting.setProvider(App.web3Provider);
 
@@ -53,7 +53,7 @@ App = {
   },
 
   render: function() {
-    var electionInstance;
+    var votingInstance;
     var loader = $("#loader");
     var content = $("#content");
 
@@ -70,31 +70,32 @@ App = {
 
     // Load contract data
     App.contracts.Voting.deployed().then(function(instance) {
-      electionInstance = instance;
-      return electionInstance.candidatesCount();
-    }).then(function(candidatesCount) {
+      votingInstance = instance;
+      return votingInstance.numCandidates();
+    }).then(function(numCandidates) {
       var candidatesResults = $("#candidatesResults");
       candidatesResults.empty();
 
       var candidatesSelect = $('#candidatesSelect');
       candidatesSelect.empty();
 
-      for (var i = 1; i <= candidatesCount; i++) {
-        electionInstance.candidates(i).then(function(candidate) {
+      for (var i = 1; i <= numCandidates; i++) {
+
+        votingInstance.candidates(i).then(function(candidate) {
           var id = candidate[0];
-          var name = candidate[1];
-          var voteCount = candidate[2];
+          var name = candidate[0];
+          var voteCount = candidate[1];
 
           // Render candidate Result
-          var candidateTemplate = "<tr><th>" + id + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
+          var candidateTemplate = "<tr><th>" + name + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
           candidatesResults.append(candidateTemplate);
 
           // Render candidate ballot option
-          var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
+          var candidateOption = "<option value='" + name + "' >" + name + "</ option>"
           candidatesSelect.append(candidateOption);
         });
       }
-      return electionInstance.voters(App.account);
+      return votingInstance.voters(App.account);
     }).then(function(hasVoted) {
       // Do not allow a user to vote
       if(hasVoted) {

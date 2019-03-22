@@ -15,15 +15,14 @@ contract Voting {
       uint indexed _candidateId
   );
 
-	function Election () public {                                               
+	function Voting () public {
 		addCandidate("Candidate 1");
 		addCandidate("Candidate 2");
 	}  
 
 	function addCandidate(string _name) private {
-		uint candidateID = numCandidates++;
-
-		candidates[candidateID] = Candidate(_name,0,true);
+		numCandidates ++;
+		candidates[numCandidates] = Candidate(_name,0,true);
 	}
 
 	function vote (uint _candidateID) public {
