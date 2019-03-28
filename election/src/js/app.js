@@ -83,15 +83,15 @@ App = {
 
         votingInstance.candidates(i).then(function(candidate) {
           var id = candidate[0];
-          var name = candidate[0];
-          var voteCount = candidate[1];
+          var name = candidate[1];
+          var voteCount = candidate[2];
 
           // Render candidate Result
-          var candidateTemplate = "<tr><th>" + name + "</th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
+          var candidateTemplate = "<tr><th>" + id + "<th><td>" + name + "</td><td>" + voteCount + "</td></tr>"
           candidatesResults.append(candidateTemplate);
 
           // Render candidate ballot option
-          var candidateOption = "<option value='" + name + "' >" + name + "</ option>"
+          var candidateOption = "<option value='" + id + "' >" + name + "</ option>"
           candidatesSelect.append(candidateOption);
         });
       }

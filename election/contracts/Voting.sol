@@ -2,6 +2,7 @@ pragma solidity 0.4.20;
 
 contract Voting {
 	struct Candidate {
+		uint id;
 		string name;
 		uint voteCount;
 		bool definedCandidate; 
@@ -22,7 +23,7 @@ contract Voting {
 
 	function addCandidate(string _name) private {
 		numCandidates ++;
-		candidates[numCandidates] = Candidate(_name,0,true);
+		candidates[numCandidates] = Candidate(numCandidates,_name,0,true);
 	}
 
 	function vote (uint _candidateID) public {
