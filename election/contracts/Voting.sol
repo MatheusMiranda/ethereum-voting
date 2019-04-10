@@ -9,7 +9,7 @@ contract Voting {
 	}
 
 	uint public numCandidates; 
-	mapping (uint => Candidate) public candidates;
+	mapping (string => Candidate) public candidates;
 	mapping (address => bool) public voters;
 
   event votedEvent (
@@ -26,20 +26,20 @@ contract Voting {
 		candidates[numCandidates] = Candidate(numCandidates,_name,0,true);
 	}
 
-	function vote (uint _candidateID) public {
+	function vote (uint _candidateName) public {
 		// require that they haven't voted before
-		require(!voters[msg.sender]);
+		// require(!voters[msg.sender]);
 
 		// require a valid candidate
-		require(candidates[_candidateID].definedCandidate == true);
+		require(candidates[_candidateName].definedCandidate == true);
 
 		// record that voter has voted
 		voters[msg.sender] = true;
 
 		// update candidate vote Count
-		candidates[_candidateID].voteCount ++;
+		candidates[_candidateName].voteCount ++;
 
 		// trigger voted event
-		votedEvent(_candidateID);
+		votedEvent(_candidateName);
 	}
 }
