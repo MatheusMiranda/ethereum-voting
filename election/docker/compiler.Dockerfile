@@ -41,4 +41,9 @@ RUN strip solc/solc
 
 FROM python:3.6
 COPY --from=build /opt/solidity/solc/solc /usr/bin/solc
+
+ADD ./requirements.txt /opt/solidity/requirements.txt
+ 
+RUN pip install --no-cache-dir -r /opt/solidity/requirements.txt
+
 #ENTRYPOINT ["/usr/bin/solc"]

@@ -42,5 +42,5 @@ def transaction():
     tx_hash = tx_hash.transact()
     # Wait for transaction to be mined...
     w3.eth.waitForTransactionReceipt(tx_hash)
-    voting_data = voting.functions.getUser().call()
+    voting_data = voting.functions.showVotingState().call()
     return jsonify({"data": voting_data}), 200

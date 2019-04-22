@@ -17,14 +17,20 @@ contract Voting {
   );
 
 	function Voting () public {
-		addCandidate("Candidate 1");
-		addCandidate("Candidate 2");
+		addCandidate("Candidate_1");
+		addCandidate("Candidate_2");
 	}  
 
 	function addCandidate(string _name) private {
 		numCandidates ++;
-		candidates[numCandidates] = Candidate(numCandidates,_name,0,true);
+		candidates[_name] = Candidate(numCandidates,_name,0,true);
 	}
+
+  function showVotingState() public returns (string) {
+      return (
+         candidates["Candidate_1"].voteCount;
+      );
+  }
 
 	function vote (uint _candidateName) public {
 		// require that they haven't voted before

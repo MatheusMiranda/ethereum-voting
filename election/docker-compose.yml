@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+
+  ethereum-compiler:
+    build:
+      context: .
+      dockerfile: ./docker/ethereum-voting.Dockerfile
+    volumes:
+      - ./:/opt/election/
