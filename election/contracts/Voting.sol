@@ -26,9 +26,9 @@ contract Voting {
 		candidates[_name] = Candidate(numCandidates,_name,0,true);
 	}
 
-  function showVotingState() public returns (string) {
+  function showVotingState() public returns (uint) {
       return (
-         candidates["Candidate_1"].voteCount;
+         candidates["Candidate_1"].voteCount
       );
   }
 

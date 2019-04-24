@@ -1,10 +1,21 @@
 version: '2'
 
 services:
-
   ethereum-compiler:
     build:
       context: .
       dockerfile: ./docker/ethereum-voting.Dockerfile
     volumes:
       - ./:/opt/election/
+
+  voting-api:
+    build:
+      context: .
+      dockerfile: ./docker/ethereum-voting.Dockerfile
+    volumes:
+      - ./:/opt/election/
+    environment:
+      - FLASK_APP=/opt/election/flask/app.py
+    ports:
+      - 5000:5000
+    command: flask run --host=0.0.0.0

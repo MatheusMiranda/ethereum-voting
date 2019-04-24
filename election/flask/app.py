@@ -1,29 +1,19 @@
 import json
-from compile_solidity_utils import w3
 from flask import Flask, Response, request, jsonify
 from marshmallow import Schema, fields, ValidationError
-
-def check_gender(data):
-    valid_list = ["male", "female"]
-    if data not in valid_list:
-        raise ValidationError(
-            'Invalid gender. Valid choices are'+ valid_list
-        )
-
-class UserSchema(Schema):
-    name = fields.String(required=True)
-    gender = fields.String(required=True, validate=check_gender)
-
+from web3 import Web3
 
 app = Flask(__name__)
+
+
+w3 = Web3(Web3.HTTPProvider("http://10.0.0.20:8545"))
 
 
 # api to set new user every api call
 @app.route("/blockchain/voting", methods=['POST'])
 def transaction():
-    
     w3.eth.defaultAccount = w3.eth.accounts[1]
-    with open("data.json", 'r') as f:
+    with open("/opt/election/data.json", 'r') as f:
         datastore = json.load(f)
     abi = datastore["abi"]
     contract_address = datastore["contract_address"]
@@ -32,15 +22,21 @@ def transaction():
     voting = w3.eth.contract(
         address=contract_address, abi=abi,
     )
+
     body = request.get_json()
-    result, error = UserSchema().load(body)
-    if error:        
-        return jsonify(error), 422
+
+    if "candidate_name" not in body:
+        return jsonify("Candidate name must be provided to cast a vote!"), 422
+
+    candidate_name = body["candidate_name"]
+        
     tx_hash = voting.functions.vote(
-        result['candidate_name']
+        candidate_name
     )
+
     tx_hash = tx_hash.transact()
-    # Wait for transaction to be mined...
+    # Wait for transaction to be mined...;w
+
     w3.eth.waitForTransactionReceipt(tx_hash)
     voting_data = voting.functions.showVotingState().call()
-    return jsonify({"data": voting_data}), 200
+    return jsonify({candidate_name: voting_data}), 200

@@ -36,6 +36,12 @@ contract Voting {
         candidates[_name] = Candidate(numCandidates,_name,0,true);
     }
 
+    function showVotingState() public returns (uint) {
+      return (
+         candidates["Candidate_1"].voteCount
+      );
+    }
+
     function vote (string _candidateName) public {
         // require that they haven't voted before
         // require(!voters[msg.sender]);
@@ -59,6 +65,7 @@ compiled_sol = compile_source(contract_source_code) # Compiled source code
 
 
 contract_interface = compiled_sol['<stdin>:Voting']
+
 
 # web3.py instance
 w3 = Web3(Web3.HTTPProvider("http://10.0.0.20:8545"))
@@ -96,6 +103,13 @@ w3.eth.waitForTransactionReceipt(tx_hash)
 #print('Updated contract greeting: {}'.format(
 #    voting.functions.greet().call()
 #))
+
+with open('data.json', 'w') as outfile:
+    data = {
+        "abi": contract_interface['abi'],
+        "contract_address": tx_receipt.contractAddress
+    }
+    json.dump(data, outfile, indent=4, sort_keys=True)
 
 # When issuing a lot of reads, try this more concise reader:
 #reader = ConciseContract(voting)
