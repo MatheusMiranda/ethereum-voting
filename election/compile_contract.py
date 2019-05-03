@@ -20,7 +20,7 @@ contract Voting {
 
     uint public numCandidates; 
     mapping (string => Candidate) candidates;
-    mapping (address => bool) voters;
+    mapping (bytes32 => bool) voters;
 
     event votedEvent (
         string _candidateName
@@ -42,6 +42,14 @@ contract Voting {
       );
     }
 
+    function addVoter (string _voterName, string _voterKey) public {
+        voters[keccak256(abi.encodePacked(_voterName, _voterKey))] = true;
+
+        // trigger voted event
+        // votedEvent(_candidateName);
+    }
+
+
     function vote (string _candidateName) public {
         // require that they haven't voted before
         // require(!voters[msg.sender]);
@@ -50,7 +58,7 @@ contract Voting {
         require(candidates[_candidateName].definedCandidate == true);
 
         // record that voter has voted
-        voters[msg.sender] = true;
+        //voters[msg.sender] = true;
 
         // update candidate vote Count
         candidates[_candidateName].voteCount ++;
