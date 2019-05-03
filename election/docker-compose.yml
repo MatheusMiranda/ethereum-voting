@@ -7,6 +7,7 @@ services:
       dockerfile: ./docker/ethereum-voting.Dockerfile
     volumes:
       - ./:/opt/election/
+    command: make deploy-contract
 
   voting-api:
     build:
@@ -19,3 +20,14 @@ services:
     ports:
       - 5000:5000
     command: flask run --host=0.0.0.0
+
+  geth-client:
+    image: ethereum/client-go:stable
+    volumes:
+      - ./config:/etc/blockchain_config
+    entrypoint: sh -c
+
+  bootnode:
+    build:
+      context: .
+      dockerfile: ./docker/bootnode.Dockerfile
