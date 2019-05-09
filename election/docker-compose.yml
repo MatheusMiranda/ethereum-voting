@@ -22,7 +22,6 @@ services:
     command: flask run --host=0.0.0.0
 
   geth-client:
-    #image: ethereum/client-go:stable
     build:
       context: .
       dockerfile: ./docker/geth-client.Dockerfile
@@ -30,4 +29,7 @@ services:
       - ./docker/passwords.env
     volumes:
       - ./config:/etc/blockchain_config
+    ports:
+      - 3000:3000
+      - 8545:8545
     entrypoint: sh -c
