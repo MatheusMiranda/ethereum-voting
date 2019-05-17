@@ -29,7 +29,10 @@ services:
       - ./docker/passwords.env
     volumes:
       - ./config:/etc/blockchain_config
+      - ./config/datadir:/root/.ethereum/
     ports:
       - 3000:3000
       - 8545:8545
+      - 30303:30303
     entrypoint: sh -c
+    command: geth --port "3000" --nodiscover --datadir=/etc/blockchain_config/datadir  --rpc --rpcport "8545" --maxpeers=25 --rpcaddr 0.0.0.0 --rpccorsdomain "*" --ipcapi --rpcapi "personal,admin,db,eth,net,web3,miner,shh,txpool,debug" --nat "any" 
