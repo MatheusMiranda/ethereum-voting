@@ -7,6 +7,12 @@ from web3.contract import ConciseContract
 
 #compiled_sol = compile_files('contracts/Voting.sol') # Compiled source code
 
+def value_based_gas_price_strategy(web3, transaction_params):
+    if transaction_params['gas'] > Web3.toWei(1, 'ether'):
+        return Web3.toWei(20, 'gwei')
+    else:
+        return Web3.toWei(5, 'gwei')
+
 contract_source_code = '''
 pragma solidity 0.4.25;
 
@@ -78,11 +84,24 @@ contract_interface = compiled_sol['<stdin>:Voting']
 # web3.py instance
 w3 = Web3(Web3.HTTPProvider("http://10.0.0.20:8545"))
 
-# set pre-funded account as sender
+from web3.middleware import geth_poa_middleware
+
+# inject the poa compatibility middleware to the innermost layer
+w3.middleware_stack.inject(geth_poa_middleware, layer=0)
+
+## set pre-funded account as sender
+
+w3.eth.setGasPriceStrategy(value_based_gas_price_strategy)
+
 w3.eth.defaultAccount = w3.eth.accounts[0]
+
+address = w3.toChecksumAddress('0x3590aca93338b0721966a8d0c96ebf2c4c87c544') 
+#
+w3.personal.unlockAccount(address, 'word')
 
 # Instantiate and deploy contract
 Voting = w3.eth.contract(abi=contract_interface['abi'], bytecode=contract_interface['bin'])
+
 
 # Submit the transaction that deploys the contract
 tx_hash = Voting.constructor().transact()
