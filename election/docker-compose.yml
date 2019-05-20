@@ -138,6 +138,30 @@ services:
       chainnet:
         ipv4_address: 172.25.0.125
 
+  ethereum-compiler:
+    build:
+      context: ./docker/compiler
+    volumes:
+      - ./:/opt/election/
+    networks:
+      chainnet:
+        ipv4_address: 172.25.0.130
+    command: make deploy-contract
+
+  voting-api:
+    build:
+      context: ./docker/compiler
+    volumes:
+      - ./:/opt/election/
+    environment:
+      - FLASK_APP=/opt/election/flask/app.py
+    ports:
+      - 5000:5000
+    networks:
+      chainnet:
+        ipv4_address: 172.25.0.135
+    command: flask run --host=0.0.0.0
+
 networks:
   chainnet:
     driver: bridge
