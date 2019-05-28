@@ -52,6 +52,26 @@ services:
       chainnet:
         ipv4_address: 172.25.0.104
 
+  #geth-dev-miner-3:
+  #hostname: geth-dev-miner-3
+  #depends_on:
+  #  - geth-bootnode
+  #environment:
+  #  - address=0x8ff9ad42706979a280d906392ac28b1b7c8deb4e #derived from the private key which is passed in the args
+  #  - bootnodeId=76a8171707eca17647a47ca99ffd348927dfa60102792ea349a25d5192e61855be83b786e376276a306afcceea4ffd1c9c77e4370b417efc39f328a0d068004c #derived from the nodekeyhex of the bootnode
+  #  - bootnodeIp=172.25.0.101
+  #build:
+  #  context: ./docker/miner
+  #  args:
+  #    privatekey: f77f9842b59281f94b7dc27addf1ef353143e65cce2bbec16455dcfbe8727eb9
+  #    password: 12345678
+  #container_name: geth-miner-3
+  #volumes:
+  # - eth-data-3:/root/.ethash
+  #networks:
+  #  chainnet:
+  #    ipv4_address: 172.25.0.105
+
   geth-dev-node:
      hostname: geth-dev-node
      depends_on:
