@@ -8,11 +8,19 @@ app = Flask(__name__)
 
 w3 = Web3(Web3.HTTPProvider("http://10.0.0.20:8545"))
 
+from web3.middleware import geth_poa_middleware
+
+# inject the poa compatibility middleware to the innermost layer
+w3.middleware_stack.inject(geth_poa_middleware, layer=0)
+
+address = w3.toChecksumAddress('0x3590aca93338b0721966a8d0c96ebf2c4c87c544')
+
+w3.personal.unlockAccount(address, 'word')
 
 # api to set new user every api call
 @app.route("/blockchain/voting", methods=['POST'])
 def transaction():
-    w3.eth.defaultAccount = w3.eth.accounts[1]
+    w3.eth.defaultAccount = w3.eth.accounts[0]
     with open("/opt/election/data.json", 'r') as f:
         datastore = json.load(f)
     abi = datastore["abi"]
