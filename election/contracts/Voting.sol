@@ -1,4 +1,4 @@
-pragma solidity 0.4.20;
+pragma solidity 0.4.25;
 
 contract Voting {
 	struct Candidate {
@@ -9,38 +9,46 @@ contract Voting {
 	}
 
 	uint public numCandidates; 
-	mapping (string => Candidate) public candidates;
-	mapping (address => bool) public voters;
+	mapping (string => Candidate) candidates;
+	mapping (bytes32 => bool) voters;
+	mapping (bytes32 => bool) has_voted;
 
-  event votedEvent (
-      uint indexed _candidateId
-  );
+	event votedEvent (
+		string _candidateName
+	);
+
+	event addedCandidadeEvent (
+		string _candidateName
+	);
 
 	function Voting () public {
-		addCandidate("Candidate_1");
-		addCandidate("Candidate_2");
-	}  
-
-	function addCandidate(string _name) private {
-		numCandidates ++;
-		candidates[_name] = Candidate(numCandidates,_name,0,true);
 	}
 
-  function showVotingState() public returns (uint) {
-      return (
-         candidates["Candidate_1"].voteCount
-      );
-  }
+	function addCandidate(string _name) public {
+		numCandidates ++;
+		candidates[_name] = Candidate(numCandidates,_name,0,true);
+		addedCandidadeEvent(_name);
+	}
 
-	function vote (uint _candidateName) public {
+	function showVotingState(string _candidateName) public returns (uint) {
+		return (
+				candidates[_candidateName].voteCount
+				);
+	}
+
+	function addVoter (string _voterName, string _voterKey) public {
+		voters[keccak256(abi.encodePacked(_voterName, _voterKey))] = true;
+	}
+
+	function vote (string _candidateName, string _voterName, string _voterKey) public {
+		// require that user has permission to vote
+		require(!voters[keccak256(abi.encodePacked(_voterName, _voterKey))]);
+
 		// require that they haven't voted before
-		// require(!voters[msg.sender]);
+		require(!has_voted[keccak256(abi.encodePacked(_voterName, _voterKey))]);
 
 		// require a valid candidate
 		require(candidates[_candidateName].definedCandidate == true);
-
-		// record that voter has voted
-		voters[msg.sender] = true;
 
 		// update candidate vote Count
 		candidates[_candidateName].voteCount ++;
@@ -49,3 +57,4 @@ contract Voting {
 		votedEvent(_candidateName);
 	}
 }
+
