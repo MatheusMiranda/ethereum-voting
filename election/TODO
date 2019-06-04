@@ -2,3 +2,4 @@ Criar datadir para salvar a Blockchain
 Verificar se é possível dar init novamente e utilizar os dados da Blockchain salvos
 Criar protocolo para dar permissão à novos sealers na Blockchain
 Escrever no TCC sobre POA
+Limitar acesso ao uso da conta utilizando o gerenciamento de permissões do próprio Flask

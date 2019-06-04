@@ -2,6 +2,10 @@ To cast a vote for a candidate use the following request:
 
 curl -H "Content-Type: application/json" --request POST -d '{"candidate_name":"Candidate_1"}' http://localhost:5000/blockchain/voting
 
+To add a candidate:
+
+curl -H "Content-Type: application/json" --request POST -d '{"candidate_name":"Candidate_1"}' http://localhost:5000/blockchain/add_candidate
+
 To generate the accounts run the commands:
 
 sudo docker-compose run --rm geth-client /etc/blockchain_config/setup_blockchain.sh
