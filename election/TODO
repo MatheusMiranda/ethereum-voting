@@ -3,3 +3,5 @@ Verificar se é possível dar init novamente e utilizar os dados da Blockchain s
 Criar protocolo para dar permissão à novos sealers na Blockchain
 Escrever no TCC sobre POA
 Limitar acesso ao uso da conta utilizando o gerenciamento de permissões do próprio Flask
+Ver estratégia de envio das credenciais, verificar se é possível enviar apenas a hash com os dados do usuário, ou se pe melhor enviar só a senha
+Verificar se as contas que possuem permissão de criar também recebem ether pelas transações
