@@ -94,7 +94,7 @@ def add_voter():
 
     if "username" not in body:
         return jsonify("Username name is a required field!"), 422
-    elif "password" not in body;
+    elif "password" not in body:
         return jsonify("Password is a required field!"), 422
 
     candidate_name = body["candidate_name"]
@@ -111,3 +111,13 @@ def add_voter():
     w3.eth.waitForTransactionReceipt(tx_hash)
     voting_data = voting.functions.showVotingState(candidate_name).call()
     return jsonify({status: "Voter was sucessfully added!"}), 200
+
+@app.route("/blockchain/show_election_results", methods=['POST'])
+def show_election_results():
+    body = request.get_json()
+
+    candidates_number = voting.functions.getNumCandidates()
+
+    print(candidates_number)
+
+    return jsonify({status: "success!"}), 200

@@ -24,8 +24,8 @@ contract Voting {
         bool definedCandidate; 
     }
 
-    uint public numCandidates; 
-    mapping (string => Candidate) candidates;
+    uint private numCandidates;
+    mapping (uint => Candidate) candidates;
     mapping (bytes32 => bool) voters;
     mapping (bytes32 => bool) has_voted;
 
@@ -42,7 +42,7 @@ contract Voting {
 
     function addCandidate(string _name) public {
         numCandidates ++;
-        candidates[_name] = Candidate(numCandidates,_name,0,true);
+        candidates[numCandidates] = Candidate(numCandidates,_name,0,true);
         addedCandidadeEvent(_name);
     }
 
@@ -71,6 +71,10 @@ contract Voting {
 
         // trigger voted event
         votedEvent(_candidateName);
+    }
+
+    function getNumCandidates() public {
+        return numCandidates;
     }
 }
 '''

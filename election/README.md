@@ -17,3 +17,7 @@ sudo docker-compose run --rm geth-client /etc/blockchain_config/init_blockchain.
 To compile the Voting contract run the command:
 
 sudo docker-compose run --rm ethereum-compiler make deploy-contract
+
+To list all candidates:
+
+curl -H "Content-Type: application/json" --request POST -d {} http://localhost:5000/blockchain/show_election_results
