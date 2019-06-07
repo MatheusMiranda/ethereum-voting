@@ -52,16 +52,16 @@ contract Voting {
                 );
     }
 
-    function addVoter (string _voterName, string _voterKey) public {
-        voters[keccak256(abi.encodePacked(_voterName, _voterKey))] = true;
+    function addVoter (string _voterKey) public {
+        voters[keccak256(abi.encodePacked(_voterKey))] = true;
     }
 
-    function vote (string _candidateName, string _voterName, string _voterKey) public {
+    function vote (string _candidateName, string _voterKey) public {
         // require that user has permission to vote
-        require(!voters[keccak256(abi.encodePacked(_voterName, _voterKey))]);
+        require(!voters[keccak256(abi.encodePacked(_voterKey))]);
 
         // require that they haven't voted before
-        require(!has_voted[keccak256(abi.encodePacked(_voterName, _voterKey))]);
+        require(!has_voted[keccak256(abi.encodePacked(_voterKey))]);
 
         // require a valid candidate
         require(candidates[_candidateName].definedCandidate == true);

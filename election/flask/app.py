@@ -60,9 +60,9 @@ def cast_vote():
         candidate_name, username, password
     )
 
-    print("\n\n\n\n")
-    web3.eth.getTransaction(tx_hash)
-    print("\n\n\n
+    #print("\n\n\n\n")
+    #web3.eth.getTransaction(tx_hash)
+    #print("\n\n\n
 
     w3.eth.waitForTransactionReceipt(tx_hash)
     voting_data = voting.functions.showVotingState(candidate_name).call()
