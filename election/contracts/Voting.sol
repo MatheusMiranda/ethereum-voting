@@ -7,7 +7,7 @@ contract Voting {
 		bool definedCandidate; 
 	}
 
-	uint private numCandidates;
+	uint public numCandidates;
 	mapping (uint => Candidate) candidates;
   mapping (string => uint) candidates_ids;
 	mapping (bytes32 => bool) voters;
