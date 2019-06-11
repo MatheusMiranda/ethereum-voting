@@ -3,13 +3,13 @@ pragma solidity 0.4.25;
 contract Voting {
 	struct Candidate {
 		uint id;
-		string name;
-		uint voteCount;
+
 		bool definedCandidate; 
 	}
 
 	uint private numCandidates;
 	mapping (uint => Candidate) candidates;
+  mapping (string => uint) candidates_ids;
 	mapping (bytes32 => bool) voters;
 	mapping (bytes32 => bool) has_voted;
 
@@ -27,6 +27,7 @@ contract Voting {
 	function addCandidate(string _name) public {
 		numCandidates ++;
 		candidates[numCandidates] = Candidate(numCandidates,_name,0,true);
+    candidates_ids[_name] = numCandidates;
 		addedCandidadeEvent(_name);
 	}
 
