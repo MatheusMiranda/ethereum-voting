@@ -16,6 +16,8 @@ def value_based_gas_price_strategy(web3, transaction_params):
 contract_source_code = '''
 pragma solidity 0.4.25;
 
+pragma experimental ABIEncoderV2;
+
 contract Voting {
     struct Candidate {
         uint id;
@@ -24,17 +26,13 @@ contract Voting {
         bool definedCandidate; 
     }
 
-    uint private numCandidates;
+    uint public numCandidates;
     mapping (uint => Candidate) candidates;
     mapping (string => uint) candidates_ids;
     mapping (bytes32 => bool) voters;
     mapping (bytes32 => bool) has_voted;
 
     event votedEvent (
-        string _candidateName
-    );
-
-    event addedCandidadeEvent (
         string _candidateName
     );
 
@@ -45,7 +43,7 @@ contract Voting {
         numCandidates ++;
         candidates[numCandidates] = Candidate(numCandidates,_name,0,true);
         candidates_ids[_name] = numCandidates;
-        addedCandidadeEvent(_name);
+        //addedCandidadeEvent(_name);
     }
 
     function addVoter (string _voterKey) public {
@@ -59,17 +57,31 @@ contract Voting {
         // require that they haven't voted before
         require(!has_voted[keccak256(abi.encodePacked(_voterKey))]);
 
+
+        uint _candidateID = candidates_ids[_candidateName];
         // require a valid candidate
-        require(candidates[_candidateName].definedCandidate == true);
+        require(candidates[_candidateID].definedCandidate == true);
 
         // update candidate vote Count
-        candidates[_candidateName].voteCount ++;
+        candidates[_candidateID].voteCount ++;
 
         // trigger voted event
         votedEvent(_candidateName);
     }
 
-    function getNumCandidates() public {
+    function showVotingResult() public returns (string[], uint[]){
+        string[] memory candidateNames = new string[](numCandidates);
+        uint[]    memory voteCounts = new uint[](numCandidates);
+
+        for (uint i = 0; i < numCandidates; i++) {
+            candidateNames[i] = candidates[i].name;
+            voteCounts[i] = candidates[i].voteCount;
+        }
+
+        return (candidateNames, voteCounts);
+    }
+
+    function getNumCandidates() public returns (uint) {
         return numCandidates;
     }
 }
