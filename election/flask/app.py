@@ -114,10 +114,6 @@ def add_voter():
 
 @app.route("/blockchain/show_election_results", methods=['POST'])
 def show_election_results():
-    body = request.get_json()
+    election_results = voting.functions.showVotingResult().call()
 
-    candidates_number = voting.functions.getNumCandidates()
-
-    print(candidates_number)
-
-    return jsonify({status: "success!"}), 200
+    return jsonify({"Election Result": election_results}), 200

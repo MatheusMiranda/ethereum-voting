@@ -57,7 +57,6 @@ contract Voting {
         // require that they haven't voted before
         require(!has_voted[keccak256(abi.encodePacked(_voterKey))]);
 
-
         uint _candidateID = candidates_ids[_candidateName];
         // require a valid candidate
         require(candidates[_candidateID].definedCandidate == true);
@@ -127,21 +126,8 @@ voting = w3.eth.contract(
     abi=contract_interface['abi'],
 )
 
-# Display the default greeting from the contract
-#print('Default contract greeting: {}'.format(
-#    voting.functions.greet().call()
-#))
-#
-#print('Setting the greeting to Nihao...')
-#tx_hash = voting.functions.setGreeting('Nihao').transact()
-
 # Wait for transaction to be mined...
 w3.eth.waitForTransactionReceipt(tx_hash)
-
-# Display the new greeting value
-#print('Updated contract greeting: {}'.format(
-#    voting.functions.greet().call()
-#))
 
 with open('data.json', 'w') as outfile:
     data = {
@@ -150,6 +136,3 @@ with open('data.json', 'w') as outfile:
     }
     json.dump(data, outfile, indent=4, sort_keys=True)
 
-# When issuing a lot of reads, try this more concise reader:
-#reader = ConciseContract(voting)
-#assert reader.greet() == "Nihao"
