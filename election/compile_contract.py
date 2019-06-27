@@ -27,6 +27,7 @@ contract Voting {
     }
 
     uint public numCandidates;
+    mapping (address => bool) allowed_accounts;
     mapping (uint => Candidate) candidates;
     mapping (string => uint) candidates_ids;
     mapping (bytes32 => bool) voters;
@@ -37,9 +38,13 @@ contract Voting {
     );
 
     function Voting () public {
+        allowed_accounts['0x3590aca93338b0721966a8d0c96ebf2c4c87c544'] = true;
+        allowed_accounts['0x8cc5a1a0802db41db826c2fcb72423744338dcb0'] = true;
     }
 
-    function addCandidate(string _name) public {
+    function addCandidate(string _name, adress account_address) public {
+        require(allowed_accounts[msg.sender]);
+
         numCandidates ++;
         candidates[numCandidates] = Candidate(numCandidates,_name,0,true);
         candidates_ids[_name] = numCandidates;
