@@ -3,6 +3,7 @@ from flask import Flask, Response, request, jsonify
 from marshmallow import Schema, fields, ValidationError
 from web3 import Web3
 import hashlib
+import sys
 
 
 app = Flask(__name__)
@@ -50,23 +51,27 @@ def cast_vote():
     body = request.get_json()
 
     if "candidate_name" not in body:
-        return jsonify("Candidate name must be provided to cast a vote!"), 422
+        return jsonify({"error": "Candidate name must be provided to cast a vote!"}), 422
 
     candidate_name = body["candidate_name"]
 
-    user_hash = generate_user_hash(body)
+    ##user_hash = generate_user_hash(body)
         
     tx_hash = voting.functions.vote(
-        candidate_name, username, password
+        candidate_name
     )
 
-    #print("\n\n\n\n")
-    #web3.eth.getTransaction(tx_hash)
-    #print("\n\n\n
+    tx_hash = tx_hash.transact()
 
     w3.eth.waitForTransactionReceipt(tx_hash)
-    voting_data = voting.functions.showVotingState(candidate_name).call()
-    return jsonify({candidate_name: voting_data}), 200
+
+    transaction_hash = w3.eth.getTransaction(tx_hash)['hash']
+    #
+    ##voting_data = voting.functions.showVotingState(candidate_name).call()
+    #print(vote_data, file=sys.stdout)
+
+    return jsonify({"transaction_hash": transaction_hash.hex(),
+                    "status": "success"}), 200
 
 @app.route("/blockchain/add_candidate", methods=['POST'])
 def add_candidate():
@@ -85,8 +90,7 @@ def add_candidate():
     # Wait for transaction to be mined...;
 
     w3.eth.waitForTransactionReceipt(tx_hash)
-    voting_data = voting.functions.showVotingState(candidate_name).call()
-    return jsonify({status: "Candidate was sucessfully added!"}), 200
+    return jsonify({"status": "Candidate was sucessfully added!"}), 200
 
 @app.route("/blockchain/add_voter", methods=['POST'])
 def add_voter():

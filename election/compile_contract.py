@@ -38,11 +38,11 @@ contract Voting {
     );
 
     function Voting () public {
-        allowed_accounts['0x3590aca93338b0721966a8d0c96ebf2c4c87c544'] = true;
-        allowed_accounts['0x8cc5a1a0802db41db826c2fcb72423744338dcb0'] = true;
+        allowed_accounts[0x3590aca93338b0721966a8d0c96ebf2c4c87c544] = true;
+        allowed_accounts[0x8cc5a1a0802db41db826c2fcb72423744338dcb0] = true;
     }
 
-    function addCandidate(string _name, adress account_address) public {
+    function addCandidate(string _name) public {
         require(allowed_accounts[msg.sender]);
 
         numCandidates ++;
@@ -55,12 +55,12 @@ contract Voting {
         voters[keccak256(abi.encodePacked(_voterKey))] = true;
     }
 
-    function vote (string _candidateName, string _voterKey) public {
+    function vote (string _candidateName) public {
         // require that user has permission to vote
-        require(!voters[keccak256(abi.encodePacked(_voterKey))]);
+        // require(!voters[keccak256(abi.encodePacked(_voterKey))]);
 
         // require that they haven't voted before
-        require(!has_voted[keccak256(abi.encodePacked(_voterKey))]);
+        // require(!has_voted[keccak256(abi.encodePacked(_voterKey))]);
 
         uint _candidateID = candidates_ids[_candidateName];
         // require a valid candidate
