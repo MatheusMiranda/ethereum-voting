@@ -46,7 +46,7 @@ def generate_user_hash(body):
 
 
 # api to set new user every api call
-@app.route("/blockchain/voting", methods=['POST'])
+@app.route("/blockchain/cast_vote", methods=['POST'])
 def cast_vote():
     body = request.get_json()
 
@@ -55,8 +55,6 @@ def cast_vote():
 
     candidate_name = body["candidate_name"]
 
-    ##user_hash = generate_user_hash(body)
-        
     tx_hash = voting.functions.vote(
         candidate_name
     )
@@ -66,9 +64,6 @@ def cast_vote():
     w3.eth.waitForTransactionReceipt(tx_hash)
 
     transaction_hash = w3.eth.getTransaction(tx_hash)['hash']
-    #
-    ##voting_data = voting.functions.showVotingState(candidate_name).call()
-    #print(vote_data, file=sys.stdout)
 
     return jsonify({"transaction_hash": transaction_hash.hex(),
                     "status": "success"}), 200
@@ -87,7 +82,6 @@ def add_candidate():
     )
 
     tx_hash = tx_hash.transact()
-    # Wait for transaction to be mined...;
 
     w3.eth.waitForTransactionReceipt(tx_hash)
     return jsonify({"status": "Candidate was sucessfully added!"}), 200
@@ -96,27 +90,23 @@ def add_candidate():
 def add_voter():
     body = request.get_json()
 
-    if "username" not in body:
-        return jsonify("Username name is a required field!"), 422
-    elif "password" not in body:
-        return jsonify("Password is a required field!"), 422
+    if "voter_account" not in body:
+        return jsonify("Voter account is a required field!"), 422
 
-    candidate_name = body["candidate_name"]
+    voter_account = w3.toChecksumAddress(body["voter_account"])
 
-    tx_hash = voting.functions.addCandidate(
-        candidate_name
+    tx_hash = voting.functions.addVoter(
+        voter_account
     )
 
-    user_hash = generate_user_hash(body)
+    transaction_hash = tx_hash.transact()
 
-    tx_hash = tx_hash.transact()
-    # Wait for transaction to be mined...;
+    w3.eth.waitForTransactionReceipt(transaction_hash)
 
-    w3.eth.waitForTransactionReceipt(tx_hash)
-    voting_data = voting.functions.showVotingState(candidate_name).call()
-    return jsonify({status: "Voter was sucessfully added!"}), 200
+    return jsonify({"transaction_hash": transaction_hash.hex(),
+                    "status": "Voter was sucessfully added!"}), 200
 
-@app.route("/blockchain/show_election_results", methods=['POST'])
+@app.route("/blockchain/show_election_results", methods=['GET'])
 def show_election_results():
     election_results = voting.functions.showVotingResult().call()
 

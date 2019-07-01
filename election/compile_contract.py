@@ -30,8 +30,8 @@ contract Voting {
     mapping (address => bool) allowed_accounts;
     mapping (uint => Candidate) candidates;
     mapping (string => uint) candidates_ids;
-    mapping (bytes32 => bool) voters;
-    mapping (bytes32 => bool) has_voted;
+    mapping (address => bool) voters;
+    mapping (address => bool) has_voted;
 
     event votedEvent (
         string _candidateName
@@ -51,16 +51,18 @@ contract Voting {
         //addedCandidadeEvent(_name);
     }
 
-    function addVoter (string _voterKey) public {
-        voters[keccak256(abi.encodePacked(_voterKey))] = true;
+    function addVoter (address _voter_account) public {
+        require(allowed_accounts[msg.sender]);
+
+        voters[_voter_account] = true;
     }
 
     function vote (string _candidateName) public {
-        // require that user has permission to vote
-        // require(!voters[keccak256(abi.encodePacked(_voterKey))]);
+        //require that user has permission to vote
+        require(voters[msg.sender]);
 
         // require that they haven't voted before
-        // require(!has_voted[keccak256(abi.encodePacked(_voterKey))]);
+        require(!has_voted[msg.sender]);
 
         uint _candidateID = candidates_ids[_candidateName];
         // require a valid candidate
@@ -71,6 +73,8 @@ contract Voting {
 
         // trigger voted event
         votedEvent(_candidateName);
+
+        has_voted[msg.sender] = true;
     }
 
     function showVotingResult() public returns (string[], uint[]){

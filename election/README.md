@@ -1,10 +1,14 @@
 To cast a vote for a candidate use the following request:
 
-curl -H "Content-Type: application/json" --request POST -d '{"candidate_name":"Candidate_1", "voter_key":"sdasdf12312512ds"}' http://localhost:5000/blockchain/voting
+curl -H "Content-Type: application/json" --request POST -d '{"candidate_name":"Candidate_1", "voter_key":"sdasdf12312512ds"}' http://localhost:5000/blockchain/cast_vote
 
 To add a candidate:
 
 curl -H "Content-Type: application/json" --request POST -d '{"candidate_name":"Candidate_1"}' http://localhost:5000/blockchain/add_candidate
+
+To add a voter:
+
+curl -H "Content-Type: application/json" --request POST -d '{"voter_account":"0x3590aca93338b0721966a8d0c96ebf2c4c87c544"}' http://localhost:5000/blockchain/add_voter
 
 To generate the accounts run the commands:
 
