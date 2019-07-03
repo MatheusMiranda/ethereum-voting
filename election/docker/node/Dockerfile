@@ -24,7 +24,7 @@ ENV address=""
 ENV bootnodeId=""
 ENV bootnodeIp=""
 
-CMD exec geth --bootnodes "enode://$bootnodeId@$bootnodeIp:30301" --networkid "6660001" --verbosity=2 --rpc --rpcaddr "0.0.0.0" --rpcapi "eth,web3,net,admin,debug,db,personal" --rpccorsdomain "*" --syncmode="full" --miner.gasprice "1"
+CMD exec geth --bootnodes "enode://$bootnodeId@$bootnodeIp:30301" --networkid "6660001" --verbosity=2 --rpc --rpcaddr "0.0.0.0" --rpcapi "eth,web3,net,admin,debug,db,personal" --rpccorsdomain "*" --syncmode="full" --miner.gasprice "1" --rpcport "8545"
 
 EXPOSE 8545
 EXPOSE 30303
