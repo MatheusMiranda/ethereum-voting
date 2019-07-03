@@ -34,9 +34,8 @@ voting = w3.eth.contract(
 
 
 def generate_user_hash(body):
-    candidate_name = body["candidate_name"]
     username = body["username"]
-    password = body["password"]
+    password = body["encrypted_password"]
     user_id = body["user_id"]
 
     user_string = username + password + user_id
@@ -52,11 +51,19 @@ def cast_vote():
 
     if "candidate_name" not in body:
         return jsonify({"error": "Candidate name must be provided to cast a vote!"}), 422
+    if "username" not in body:
+        return jsonify("Username name is a required field!"), 422
+    elif "encrypted_password" not in body:
+        return jsonify("Encrypted password is a required field!"), 422
+    elif "user_id" not in body:
+        return jsonify("User id is a required field!"), 422
+
+    user_hash = generate_user_hash(body)
 
     candidate_name = body["candidate_name"]
 
     tx_hash = voting.functions.vote(
-        candidate_name
+        candidate_name, user_hash
     )
 
     tx_hash = tx_hash.transact()
@@ -90,13 +97,17 @@ def add_candidate():
 def add_voter():
     body = request.get_json()
 
-    if "voter_account" not in body:
-        return jsonify("Voter account is a required field!"), 422
+    if "username" not in body:
+        return jsonify("Username name is a required field!"), 422
+    elif "encrypted_password" not in body:
+        return jsonify("Encrypted password is a required field!"), 422
+    elif "user_id" not in body:
+        return jsonify("User id is a required field!"), 422
 
-    voter_account = w3.toChecksumAddress(body["voter_account"])
+    user_hash = generate_user_hash(body)
 
     tx_hash = voting.functions.addVoter(
-        voter_account
+        user_hash
     )
 
     transaction_hash = tx_hash.transact()
