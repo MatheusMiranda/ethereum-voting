@@ -71,9 +71,11 @@ def cast_vote():
     w3.eth.waitForTransactionReceipt(tx_hash)
 
     transaction_hash = w3.eth.getTransaction(tx_hash)['hash']
+    transaction_data = w3.eth.getTransaction(transaction_hash)
+    function, transaction_input = voting.decode_function_input(transaction_data.input)
 
     return jsonify({"transaction_hash": transaction_hash.hex(),
-                    "status": "success"}), 200
+                    "status": "success", "input": transaction_input}), 200
 
 @app.route("/blockchain/add_candidate", methods=['POST'])
 def add_candidate():
@@ -119,6 +121,25 @@ def add_voter():
 
 @app.route("/blockchain/show_election_results", methods=['GET'])
 def show_election_results():
-    election_results = voting.functions.showVotingResult().call()
+    candidates, votes = voting.functions.showVotingResult().call()
 
-    return jsonify({"Election Result": election_results}), 200
+    return jsonify({"Election Result": list(candidates)}), 200
+
+@app.route("/blockchain/manage_base_account", methods=['POST'])
+def manage_base_account():
+    body = request.get_json()
+
+    if "base_account_address" not in body:
+        return jsonify("Base account address is a required field!"), 422
+
+    base_account_address = body["base_account_address"]
+
+    tx_hash = voting.functions.manageBaseAccount(
+        base_account_address
+    )
+
+    transaction_hash = tx_hash.transact()
+
+    w3.eth.waitForTransactionReceipt(transaction_hash)
+
+    return jsonify({"transaction_hash": transaction_hash.hex()}), 200

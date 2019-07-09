@@ -81,12 +81,18 @@ contract Voting {
         string[] memory candidateNames = new string[](numCandidates);
         uint[]    memory voteCounts = new uint[](numCandidates);
 
-        for (uint i = 0; i < numCandidates; i++) {
+        for (uint i = 1; i <= numCandidates; i++) {
             candidateNames[i] = candidates[i].name;
             voteCounts[i] = candidates[i].voteCount;
         }
 
         return (candidateNames, voteCounts);
+    }
+
+    function manageBaseAccount (address accountAddress, bool permission){
+        require(allowed_accounts[msg.sender]);
+
+        allowed_accounts[accountAddress] = permission;
     }
 
     function getNumCandidates() public returns (uint) {
