@@ -1,45 +1,65 @@
-pragma solidity 0.4.20;
+pragma solidity 0.4.25;
 
 contract Voting {
 	struct Candidate {
 		uint id;
-		string name;
-		uint voteCount;
+
 		bool definedCandidate; 
 	}
 
-	uint public numCandidates; 
-	mapping (uint => Candidate) public candidates;
-	mapping (address => bool) public voters;
+	uint public numCandidates;
+	mapping (uint => Candidate) candidates;
+  mapping (string => uint) candidates_ids;
+	mapping (bytes32 => bool) voters;
+	mapping (bytes32 => bool) has_voted;
 
-  event votedEvent (
-      uint indexed _candidateId
-  );
+	event votedEvent (
+		string _candidateName
+	);
+
+	event addedCandidadeEvent (
+		string _candidateName
+	);
 
 	function Voting () public {
-		addCandidate("Candidate 1");
-		addCandidate("Candidate 2");
-	}  
+	}
 
-	function addCandidate(string _name) private {
+	function addCandidate(string _name) public {
 		numCandidates ++;
 		candidates[numCandidates] = Candidate(numCandidates,_name,0,true);
+    candidates_ids[_name] = numCandidates;
+		addedCandidadeEvent(_name);
 	}
 
-	function vote (uint _candidateID) public {
+	function showVotingState(string _candidateName) public returns (uint) {
+		return (
+				candidates[_candidateName].voteCount
+				);
+	}
+
+	function addVoter (string _voterKey) public {
+		voters[keccak256(abi.encodePacked(_voterKey))] = true;
+	}
+
+	function vote (string _candidateName, string _voterKey) public {
+		// require that user has permission to vote
+		require(!voters[keccak256(abi.encodePacked(_voterKey))]);
+
 		// require that they haven't voted before
-		require(!voters[msg.sender]);
+		require(!has_voted[keccak256(abi.encodePacked(_voterKey))]);
 
 		// require a valid candidate
-		require(candidates[_candidateID].definedCandidate == true);
-
-		// record that voter has voted
-		voters[msg.sender] = true;
+		require(candidates[_candidateName].definedCandidate == true);
 
 		// update candidate vote Count
-		candidates[_candidateID].voteCount ++;
+		candidates[_candidateName].voteCount ++;
 
 		// trigger voted event
-		votedEvent(_candidateID);
+		votedEvent(_candidateName);
+	}
+
+	function getNumCandidates() public {
+		return numCandidates;
 	}
 }
+
